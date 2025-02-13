@@ -177,3 +177,131 @@ docker compose -p kitchenpos up -d
 | 고객이 배정된 테이블    | assignedTable    | 고객이 배정된 테이블이며, 고객 배정 이후 주문을 등록할 수 있다                                        |
 
 ## 모델링
+
+### 객체 기반 모델링
+
+![objectModeling.png](assets/images/objectModel.png)
+
+### Product
+
+- `Product`는 이름과, 가격을 가지고 있다.
+- `Product`는 이름과 가격을 입력하여 등록 가능하다
+  - 등록 정책
+    - 이름과 가격은 반드시 입력되어야 한다
+    - 이름은 비속어가 포함될 수 없다
+    - 가격은 0원 이상이어야 한다
+- `Product`의 가격을 변경할 수 있다
+  - 가격 수정 정책
+    - 가격은 0원 이상이어야 한다
+  - `Menu` 가격이 `Menu`가 속한 `Product`가격 총합보다 크면 `hiddenMenu`가 된다
+- `Product` 목록을 조회할 수 있다
+
+### MenuGroup
+
+- `MenuGroup`은 이름을 가지고 있다
+- `MenuGroup`을 이름을 입력하여 등록할 수 있다
+  - 정책
+    - 이름은 공백만 입력할 수 없으며 반드시 입력되어야 한다
+- `MenuGroup` 목록을 조회할 수 있다
+
+### Menu
+
+- `Menu`는 이름, 가격, `MenuGroup`, 메뉴 노출 여부룰 가지고 있다
+- `Menu`를 등록할 수 있다
+  - 이름, 가격, `MenuGroup`, 메뉴 노출 여부를 입력하여 등록한다
+  - 정책
+    - `Menu`는 1개 이상의 `Product`로 구성되어야 한다
+    - `Menu`를 구성하는 `Product`의 수량은 0이상이어야 한다
+    - 이름과 가격, `MenuGroup`은 반드시 입력되어야 한다
+    - 이름은 비속어가 포함될 수 없다
+    - 가격은 0원 이상이어야 한다
+    - `Menu`가격은 `Menu`가 속한 `Product`가격 총합 이하여야 한다
+- `Menu`의 가격을 변경할 수 있다
+  - 정책
+    - 가격은 반드시 입력되어야 하며 0원 이상이어야 한다
+    - `Menu`가격은 `Menu`가 속한 `Product`가격 총합 이하여야 한다
+
+- `visibleMenu`가 된다
+  - 메뉴 노출 여부를 true로 변경하여 `visibleMenu`로 만든다
+  - 정책
+    - `Menu`가격은 `Menu`가 속한 `Product`가격 총합 이하여야 한다
+
+- `hiddenMenu`가 된다
+  - 메뉴 노출 여부를 false로 변경하여 `hiddenMenu`로 만든다
+
+- `Menu`의 목록을 조회할 수 있다
+
+### OrderTable
+
+- `OrderTable`은 이름, `numberOfCustomer`, 고객이 배정된 테이블인지 여부를 가지고 있다
+- `OrderTable`의 이름을 입력하여 등록할 수 있다
+  - `numberOfCustomer`을 0으로 등록한다
+  - 고객이 배정된 테이블인지 여부를 false로 등록한다
+  - 정책
+    - 이름은 공백만 입력할 수 없으며 반드시 입력되어야 한다
+- `OrderTable`이 `assignedTable`로 된다
+  - 고객이 배정된 테이블인지 여부가 true로 변경된다
+- `OrderTable`이 `clearedTable`로 된다
+  - `numberOfCustomer`을 0으로 변경한다
+  - 고객이 배정된 테이블인지 여부를 false로 변경한다
+  - 정책
+    - 완료되지 않은 주문이 있는 `OrderTable`은 `clearedTable`가 될 수 없다
+- `numberOfCustomer`를 변경할 수 있다
+  - 정책
+    - 음수로는 변경할 수 없다
+    - `clearedTable`이면 변경할 수 없다
+- `OrderTable` 목록을 조회할 수 있다
+
+### Order
+
+#### `orderType`에 따른 `orderStatus` 변화
+
+![orderStatusFlow.png](assets/images/orderStatusFlow.png)
+
+- `Order`를 등록한다
+  - 1개 이상의 `visibleMenu`로 주문 등록할 수 있다
+  - 공통 정책
+    - `orderType`이 `deliveryOrder`, `takeOutOrder`, `eatInOrder` 중 하나여야 한다
+    - 1개 이상의 `orderMenu`이 있어야 한다
+    - `hiddenMenu`는 주문 등록할 수 없다
+    - `orderMenu` 목록에 속한 `Menu`가격은 실제 `Menu`가 가격과 동일해야 한다
+
+  - `deliveryOrder` 등록 정책
+    - `orderMenu`의 수량은 0이상이어야 한다
+    - 배달 주소는 공백만 입력할 수 없으며 반드시 입력되어야 한다
+
+  - `takeOutOrder` 등록 정책
+    - `orderMenu`의 수량은 0이상이어야 한다
+
+  - `eatInOrder` 등록 정책
+    - `clearedTable`면 등록할 수 없다
+
+  - `Order`가 정상적으로 등록되면 `waitingOrder`가 된다
+
+- `Order`가 `acceptedOrder`가 된다
+  - 정책
+    - `waitingOrder`인 경우만 가능하다
+  - `deliveryOrder`는 `deliveryAgent`에게 `orderMenu`목록에 속한 `Menu` 가격의 총합, 배달 주소를 전달한다
+
+- `Order`가 `servedOrder`가 된다
+  - 정책
+    - `acceptedOrder`인 경우만 가능하다
+
+- `Order`가 `deliveringOrder`가 된다
+  - 정책
+    - `orderType`이 `deliveryOrder`여야 한다
+    - `servedOrder`인 경우만 가능하다
+
+- `Order`가 `deliveredOrder`가 된다
+  - 정책
+    - `deliveringOrder`인 경우만 가능하다
+
+- `Order`가 `completedOrder`가 된다
+  - 정책
+    - `deliveryOrder`는 `deliveredOrder`여야 한다
+    - `takeOutOrder`, `eatInOrder`는 `servedOrder`여야 한다
+  - `eatInOrder`의 경우, `OrderTable`에 속한 `Order`의 `orderStatus`가 `completedOrder`일 때 `clearedTable`로 만든다
+    - `numberOfCustomer`을 0으로 변경한다
+    - 고객이 배정된 테이블인지 여부를 true로 변경한다
+
+- `Order` 목록을 조회할 수 있다
