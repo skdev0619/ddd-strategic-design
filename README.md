@@ -364,14 +364,23 @@ docker compose -p kitchenpos up -d
         - `occupied`를 false로 변경한다
 
 ## 패키지 구조
-- 패키지 구조는 kitchenpos 아래 product, menu, order, eatinorder, takoutorder, deliveryorder로 나눠진다.
+- 패키지 구조는 kitchenpos 아래 common, product, menu, order, eatinorder, takoutorder, deliveryorder로 나눠진다.
 - 각 2depth 패키지(product, menu 등)은 application, domain, infra, ui로 구성되어 있다.
+    - common : 각 패키지에서 공통적으로 사용되는 파일과 외부 모듈
     - product : 상품
     - menu : 메뉴
     - order : 매장내식사/포장/배달 주문의 공통 파일을 관리
     - eatinorder : 매장내식사주문
     - takoutorder : 포장 주문
     - deliveryorder : 배달 주문 추가
+
+ex) kitchenpos.common
+```
+kitchenpos.common
+├── external
+│   ├── DefaultPurgomalumClient
+│   └── PurgomalumClient
+```
 
 ex) kitchenpos.product
 ```
