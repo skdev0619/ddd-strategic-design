@@ -3,7 +3,7 @@ package kitchenpos.order.infra;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.eatinorder.domain.OrderTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
