@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import static kitchenpos.Fixtures.INVALID_ID;
-import static kitchenpos.Fixtures.menu;
-import static kitchenpos.Fixtures.menuGroup;
-import static kitchenpos.Fixtures.menuProduct;
-import static kitchenpos.Fixtures.product;
+import static kitchenpos.fixture.Fixtures.INVALID_ID;
+import static kitchenpos.fixture.Fixtures.menu;
+import static kitchenpos.fixture.Fixtures.menuGroup;
+import static kitchenpos.fixture.Fixtures.menuProduct;
+import static kitchenpos.fixture.Fixtures.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

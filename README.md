@@ -370,6 +370,8 @@ docker compose -p kitchenpos up -d
     - menu : 메뉴
     - order : 매장내식사/포장/배달 주문의 공통 파일을 관리
     - eatinorder : 매장내식사주문
+    - takoutorder : 포장 주문
+    - deliveryorder : 배달 주문 추가
 
 ex) kitchenpos.product
 ```
