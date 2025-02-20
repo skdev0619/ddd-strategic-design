@@ -367,6 +367,7 @@ docker compose -p kitchenpos up -d
 - 패키지 구조는 kitchenpos 아래 product, menu, order, eatinorder, takoutorder, deliveryorder로 나눠진다.
 - 각 2depth 패키지(product, menu 등)은 application, domain, infra, ui로 구성되어 있다.
     - product : 상품
+    - menu : 메뉴
 
 ex) kitchenpos.product
 ```
