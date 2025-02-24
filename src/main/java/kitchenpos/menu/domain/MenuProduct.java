@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import kitchenpos.product.domain.Product;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
@@ -22,19 +23,15 @@ public class MenuProduct {
     @Id
     private Long seq;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(
-        name = "product_id",
-        columnDefinition = "binary(16)",
-        foreignKey = @ForeignKey(name = "fk_menu_product_to_product")
-    )
-    private Product product;
-
     @Column(name = "quantity", nullable = false)
     private long quantity;
 
-    @Transient
+    @Column(name = "product_id", nullable = false)
     private UUID productId;
+    
+    //TODO 제거해야하는게 맞으나 영향가는 곳이 맞아서 일단 유지
+    @Transient
+    private Product product;
 
     public MenuProduct() {
     }
